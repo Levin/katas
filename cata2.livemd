@@ -1,0 +1,106 @@
+# Cata 2
+
+```elixir
+Mix.install([{:kino, "<= 1.0.0"}])
+```
+
+## Part One
+
+```elixir
+
+```
+
+Break down the problem:
+
+Part One: What is the problem
+
+I want to find the cheapest way to get from the top left to the bottom right number in an array.
+
+The costs are defined by the number on the index.
+
+I can only move one index right or down
+
+<!-- livebook:{"break_markdown":true} -->
+
+Part Two: Pseudocode
+
+```elixir
+# data
+# check array item with index + 1
+# check array item with row + 1
+# compare and increase index or row
+# save number to array
+# array is result => Enum.sum
+```
+
+```elixir
+defmodule Finder do
+  use GenServer
+  require Logger
+
+  def get_next_fields() do
+    GenServer.call(__MODULE__, :next_fields)
+  end
+
+  def start() do
+    GenServer.start_link(__MODULE__, %{path: [], index: nil})
+  end
+
+  def init(params) do
+    Logger.debug("[#{__MODULE__}] got these parameters #{inspect(params)}")
+    {:ok, params}
+  end
+
+  def raw() do
+    "
+      1163751742
+      1381373672
+      2136511328
+      3694931569
+      7463417111
+      1319128137
+      1359912421
+      3125421639
+      1293138521
+      2311944581
+      "
+  end
+
+  def data() do
+    Finder.raw()
+    |> String.split("\n", trim: true)
+    |> Enum.map(&String.trim/1)
+    |> Enum.map(&String.split(&1, "", trim: true))
+    |> Enum.map(fn list -> Enum.map(list, &String.to_integer(&1)) end)
+    |> Enum.reject(fn x -> x == [] end)
+    |> Enum.with_index(1)
+    |> Enum.map(fn {list, index} -> {Enum.with_index(list, 1), index} end)
+  end
+
+  def handle_call(:next_fields, _from, state) do
+    fields = [4, 2]
+    {:reply, fields, state}
+  end
+
+  def get_row({val, idx} = point) do
+    Finder.data()
+    |> Enum.map(fn {list, row} ->
+      %{col: List.first(Enum.filter(list, fn {value, col} -> idx == col end)), row: row}
+    end)
+  end
+
+  def get_next_row({val, idx} = point) do
+    Finder.data()
+    |> Enum.map(fn {list, row} ->
+      %{col: List.first(Enum.filter(list, fn {value, col} -> idx + 1 == col end)), row: row}
+    end)
+  end
+end
+
+# |> Enum.map(fn list -> Enum.)
+```
+
+```elixir
+Finder.start()
+Finder.get_next_fields()
+```

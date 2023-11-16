@@ -1,0 +1,43 @@
+# Cata 1
+
+```elixir
+Mix.install([
+  {:kino, "<= 1.0.0"}
+])
+```
+
+## First Part
+
+The objective is to solve the first challenge of the advent of code 2021
+
+```elixir
+raw = Kino.Input.textarea("Input goes here:")
+```
+
+```elixir
+Kino.Input.read(raw)
+|> String.split("\n", trim: true)
+|> Enum.map(&String.to_integer/1)
+|> Enum.chunk_every(2, 1, :discard)
+|> Enum.count(fn [left, right] -> right > left end)
+```
+
+## Second Part
+
+```elixir
+raw = Kino.Input.textarea("Input goes here:")
+```
+
+```elixir
+Kino.Input.read(raw)
+|> String.split("\n", trim: true)
+|> Enum.map(&String.to_integer/1)
+|> Enum.chunk_every(3, 1, :discard)
+|> Enum.chunk_every(2)
+|> Enum.map(fn [left, right] -> [Enum.sum(left), Enum.sum(right)] end)
+|> List.flatten()
+|> Enum.chunk_every(2, 1, :discard)
+|> Enum.count(fn [left, right] -> right > left end)
+
+# IO.inspect(data)
+```

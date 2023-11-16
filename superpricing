@@ -1,0 +1,50 @@
+http://codekata.com/kata/kata01-supermarket-pricing/
+Thoughts about Pricing
+	
+	  <| <- pricing => 1 orange(.99m)/2oranges(1.50m)/3oranges(2.0m)
+	   |	 
+	 ooo  <- oranges
+	|___| <- basket
+
+	Questions: 
+	Does fractional money exist? 
+		- It does (see: _.fraction)
+		- It can be splitted further down to multiplying the ((0.7-0.85)*amount/weight) with price
+
+	Does/If yes when does rounding take place?
+		- donation collection -> before payment, if customer wants to help raise money the cashier can round
+		- mostly upwards, downwards probably if item slightly broken
+
+	How to keep an audit trail of pricing desicions (do you need one ?)?
+		WHY/WHAT:
+		- depends on store and suppliers
+			-> maybe my store can get better pricing when we deliver metrics to our suppliers/producers
+		- if we have influence on our own pricing, we should definately have some metrics gathering
+		- if prices are predefined, just scrape the catalog we get/the excel sheet
+		HOW:
+		- Elixir: GenServer/GenStateFM
+			-> current_prices: [%{product: x, price: y, from: date1, to: date2}]
+			-> past_prices: [%{product: x, price: y+1, from: date3, to: date4}, %{product: x, price: y-4, from: date5, to: date6}]
+			-> functions: display_price_motion(product) -> produces graph with dates/prices
+
+	Are Prices and Costs the same class of thing?:
+		similarities
+			- about money
+		
+		differences
+			- prices include the margin of the reseller
+				- b2c
+			- costs should be the cleaned price for the store
+				- b2b
+
+		=> not the same
+
+	If a shelf of 100 cans is priced using “buy two, get one free”, how do you value the stock?
+		options:
+			one validation for whole stock
+			two validations for whole stock and for offer(group them by 3 and calculate only two)
+			only the offer is evaluated
+			estimates from earlier offers, estimate that if the same amount of customers take the offer, how much do we lose/whats their gain
+
+
+
