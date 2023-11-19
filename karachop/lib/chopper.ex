@@ -44,7 +44,7 @@ defmodule Chopper do
   end
 
 
-  ef handle_call(:info, _from, state) do
+  def handle_call(:info, _from, state) do
     {:reply,state,  state}
   end
 
