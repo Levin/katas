@@ -13,11 +13,15 @@ defmodule Ropper do
   end
 
   def start(list, search) do
+
     params = %{list: Enum.sort(list,:asc), search: search, found: false, found_by: nil}
     GenServer.start_link(__MODULE__, params, name: __MODULE__)
   end
 
   def init(params) do
+    if params.search not in params.list do
+      {:stop, :not_found, params}
+    end
     {:ok, params}
   end
 
@@ -64,6 +68,10 @@ defmodule Ropper do
     IO.inspect({:found_by, state.found_by})
   end
   
+  def terminate(:not_found, state) do
+    Logger.debug("[#{__MODULE__}] is done searching and didn't find #{state.search}!!")
+    Logger.debug("*** [#{__MODULE__}] REASON: NUMBER NOT IN LIST ***")
+  end
   defp catch_ends(list, search) do
     first = List.first(list)
     last = List.last(list)
