@@ -34,14 +34,14 @@ defmodule Ropper do
 
     cond do
       mid == state.search -> 
-        {:noreply, %{state | found: true, list: [mid], found_by: :algo}}
+        {:stop, :found, %{state | found: true, list: [mid], found_by: :algo}}
         
       mid >= state.search ->
         left = Enum.take(state.list, half)
         case catch_ends(left, state.search) do
           {:found, val} -> 
             Logger.debug("[#{__MODULE__}] found #{val} in late round !")
-            {:noreply, %{state | found: true, list: [val], found_by: :levin}}
+            {:stop, :found, %{state | found: true, list: [val], found_by: :levin}}
 
           {:not_found, _} -> 
             {:noreply, %{state | list: Enum.reverse(left)}}
@@ -51,13 +51,17 @@ defmodule Ropper do
         right = Enum.take(Enum.reverse(state.list), half)
         case catch_ends(right, state.search) do
           {:found, val} -> 
-            Logger.debug("[#{__MODULE__}] found the number in late round !")
-            {:noreply, %{state | found: true, list: [val], found_by: :levin}}
+            {:stop, :found, %{state | found: true, list: [val], found_by: :levin}}
 
           {:not_found, _} -> 
             {:noreply, %{state | list: Enum.reverse(right)}}
         end
     end
+  end
+
+  def terminate(:found, state) do
+    Logger.debug("[#{__MODULE__}] is done searching and found #{state.search}!!")
+    IO.inspect({:found_by, state.found_by})
   end
   
   defp catch_ends(list, search) do
