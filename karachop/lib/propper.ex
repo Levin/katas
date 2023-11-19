@@ -13,7 +13,7 @@ defmodule Ropper do
   end
 
   def start(list, search) do
-    params = %{list: list, search: search, found: false}
+    params = %{list: Enum.sort(list,:asc), search: search, found: false, found_by: nil}
     GenServer.start_link(__MODULE__, params, name: __MODULE__)
   end
 
@@ -27,19 +27,53 @@ defmodule Ropper do
 
   def handle_cast(:chop, state) do
     half = div(length(state.list), 2)
-    mid = Enum.at(state.list, half) 
+    mid = Enum.at(state.list, half)
+
+    Logger.debug("[#{__MODULE__}] => list length(#{length(state.list)}) has half: #{half} and value #{mid}")
+    Logger.debug("[#{__MODULE__}] => list looks like this: #{inspect state.list}")
+
     cond do
       mid == state.search -> 
-        {:noreply, %{state | found: true}}
+        {:noreply, %{state | found: true, list: [mid], found_by: :algo}}
+        
       mid >= state.search ->
         left = Enum.take(state.list, half)
+        case catch_ends(left, state.search) do
+          {:found, val} -> 
+            Logger.debug("[#{__MODULE__}] found #{val} in late round !")
+            {:noreply, %{state | found: true, list: [val], found_by: :levin}}
+
+          {:not_found, _} -> 
+            {:noreply, %{state | list: Enum.reverse(left)}}
+        end
         {:noreply, %{state | list: left}}
       mid <= state.search -> 
         right = Enum.take(Enum.reverse(state.list), half)
-        {:noreply, %{state | list: Enum.reverse(right)}}
+        case catch_ends(right, state.search) do
+          {:found, val} -> 
+            Logger.debug("[#{__MODULE__}] found the number in late round !")
+            {:noreply, %{state | found: true, list: [val], found_by: :levin}}
+
+          {:not_found, _} -> 
+            {:noreply, %{state | list: Enum.reverse(right)}}
+        end
+    end
+  end
+  
+  defp catch_ends(list, search) do
+    first = List.first(list)
+    last = List.last(list)
+    
+    num = cond do
+      first == search -> {:found, first}
+      last == search -> {:found, last}
+      last != search && first != search -> {:not_found, nil}
     end
 
-  end
 
+    Logger.debug("[#{__MODULE__}] searches #{search} and got #{inspect num}!")
+
+    num
+  end
 
 end
