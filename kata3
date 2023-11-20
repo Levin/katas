@@ -1,0 +1,20 @@
+ How many binary digits/bits are required to represent thsoe numbers (unsigned): 
+
+ 1_000 -> 3/4
+ 1_000_000 -> 6/7
+ 1_000_000_000 -> 10/11
+ 1_000_000_000_000 -> 13/14
+ 8_000_000_000_000 -> 14/15
+
+My town has approximately 20,000 residences. How much space is required to store the names, addresses, and a phone number for all of these (if we store them as characters)?
+Answer: 20.000 * ((15 digits) + varchar255 + varchar(100)) => 20.000 * 400 => 8.000.000 => 
+
+I’m storing 1,000,000 integers in a binary tree. Roughly how many nodes and levels can I expect the tree to have? Roughly how much space will it occupy on a 32-bit architecture?
+Answer: nodes: 1_000_000
+	levels: 5_000
+
+My copy of Meyer’s Object Oriented Software Construction has about 1,200 body pages. Assuming no flow control or protocol overhead, about how long would it take to send it over an async 56k baud modem line?
+Answer: 50 kb * 1200 => 60.000 / 8 => 7.800.000 / 56.000 => 15s
+
+My binary search algorithm takes about 4.5mS to search a 10,000 entry array, and about 6mS to search 100,000 elements. How long would I expect it to take to search 10,000,000 elements (assuming I have sufficient memory to prevent paging).
+Answer: 
