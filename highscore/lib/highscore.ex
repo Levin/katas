@@ -15,8 +15,7 @@ defmodule Highscore do
   def remove_player(scores, name) do
     # Please implement the remove_player/2 function
     scores
-    |> Enum.filter(fn player -> player != name end)
-    |> Enum.to_list()
+    |> Enum.filter(fn {player, score} -> player != name end)
   end
 
   def reset_score(scores, name) do
